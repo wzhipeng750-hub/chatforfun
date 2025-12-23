@@ -14,6 +14,7 @@ const messagesContainer = document.getElementById('messages');
 const welcomeScreen = document.getElementById('welcomeScreen');
 const chatContainer = document.getElementById('chatContainer');
 const chatHistory = document.getElementById('chatHistory');
+const clearCacheBtn = document.getElementById('clearCacheBtn');
 const promptBtns = document.querySelectorAll('.prompt-btn');
 
 // 状态管理
@@ -45,6 +46,9 @@ function setupEventListeners() {
     // 新对话
     newChatBtn.addEventListener('click', startNewChat);
     newChatMobile.addEventListener('click', startNewChat);
+
+    // 清除缓存
+    clearCacheBtn.addEventListener('click', clearCache);
 
     // 设置弹窗（已禁用，使用固定配置）
     // settingsBtn.addEventListener('click', openSettings);
@@ -114,6 +118,14 @@ function startNewChat() {
     welcomeScreen.classList.remove('hidden');
     closeSidebar();
     updateActiveHistory();
+}
+
+// 清除缓存
+function clearCache() {
+    if (confirm('确定要清除所有历史数据吗？')) {
+        localStorage.clear();
+        location.reload();
+    }
 }
 
 function createConversation(firstMessage) {

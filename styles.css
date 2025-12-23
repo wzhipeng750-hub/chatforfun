@@ -110,6 +110,25 @@ body {
     border-top: 1px solid var(--border-color);
 }
 
+.clear-cache-btn {
+    width: 100%;
+    padding: 10px 16px;
+    background: transparent;
+    border: 1px solid #ff4d4f;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #ff4d4f;
+    transition: all 0.2s;
+}
+
+.clear-cache-btn:hover {
+    background: #fff1f0;
+}
+
 .settings-btn {
     width: 100%;
     padding: 10px 16px;
