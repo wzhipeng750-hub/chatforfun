@@ -91,9 +91,7 @@ function closeSettingsModal() {
 }
 
 function loadSettings() {
-    config.apiKey = localStorage.getItem('apiKey') || '';
-    config.appCode = localStorage.getItem('appCode') || '';
-    config.model = localStorage.getItem('model') || '';
+    // 使用固定配置，不从 localStorage 读取
 }
 
 function saveSettingsHandler() {
@@ -243,11 +241,13 @@ function appendMessage(role, content, animate = true) {
     const messageEl = document.createElement('div');
     messageEl.className = `message ${role}`;
     
-    const avatar = role === 'user' ? '我' : 'AI';
     const formattedContent = formatMessage(content);
+    const avatarHtml = role === 'user' 
+        ? '<div class="avatar">我</div>' 
+        : '<img class="avatar" src="touxiang.jpg" alt="助手">';
 
     messageEl.innerHTML = `
-        <div class="avatar">${avatar}</div>
+        ${avatarHtml}
         <div class="message-content">${formattedContent}</div>
     `;
 
@@ -281,7 +281,7 @@ function showTypingIndicator() {
     const el = document.createElement('div');
     el.className = 'message assistant';
     el.innerHTML = `
-        <div class="avatar">AI</div>
+        <img class="avatar" src="touxiang.jpg" alt="助手">
         <div class="message-content">
             <div class="typing-indicator">
                 <span></span>
