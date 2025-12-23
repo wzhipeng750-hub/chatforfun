@@ -21,11 +21,11 @@ let conversations = JSON.parse(localStorage.getItem('conversations')) || [];
 let currentConversationId = null;
 let isLoading = false;
 
-// 配置
+// 配置（固定值）
 const config = {
-    apiKey: localStorage.getItem('apiKey') || '',
-    appCode: localStorage.getItem('appCode') || '',
-    model: localStorage.getItem('model') || ''
+    apiKey: 'Link_EyrdPJTHLBjpEhRuuYptcNA3D0m1bGVe7CtTtubN4r',
+    appCode: 'H8Cd00WB',
+    model: ''
 };
 
 // 初始化
@@ -46,13 +46,10 @@ function setupEventListeners() {
     newChatBtn.addEventListener('click', startNewChat);
     newChatMobile.addEventListener('click', startNewChat);
 
-    // 设置弹窗
-    settingsBtn.addEventListener('click', openSettings);
-    closeSettings.addEventListener('click', closeSettingsModal);
-    saveSettings.addEventListener('click', saveSettingsHandler);
-    settingsModal.addEventListener('click', (e) => {
-        if (e.target === settingsModal) closeSettingsModal();
-    });
+    // 设置弹窗（已禁用，使用固定配置）
+    // settingsBtn.addEventListener('click', openSettings);
+    // closeSettings.addEventListener('click', closeSettingsModal);
+    // saveSettings.addEventListener('click', saveSettingsHandler);
 
     // 发送消息
     sendBtn.addEventListener('click', sendMessage);
