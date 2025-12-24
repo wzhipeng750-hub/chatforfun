@@ -263,18 +263,28 @@ function appendMessage(role, content, animate = true, audioUrl = null) {
         ? '<div class="avatar">我</div>' 
         : '<img class="avatar" src="touxiang.jpg" alt="助手">';
     
-    // 如果有语音，添加播放按钮
-    const audioBtn = (role === 'assistant' && audioUrl) 
-        ? `<button class="audio-btn" onclick="playAudio('${audioUrl}')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M8 5v14l11-7z"/>
-            </svg>
-           </button>` 
+    // 获取当前时间
+    const now = new Date();
+    const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+    
+    // AI消息显示时间和播放按钮
+    const messageHeader = role === 'assistant' 
+        ? `<div class="message-header">
+            <span class="message-time">${timeStr}</span>
+            <button class="audio-btn" onclick="playAudio('${audioUrl || ''}')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+            </button>
+           </div>` 
         : '';
 
     messageEl.innerHTML = `
         ${avatarHtml}
-        <div class="message-content">${formattedContent}${audioBtn}</div>
+        <div class="message-wrapper">
+            ${messageHeader}
+            <div class="message-content">${formattedContent}</div>
+        </div>
     `;
 
     if (!animate) {
