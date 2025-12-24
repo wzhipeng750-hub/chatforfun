@@ -362,13 +362,7 @@ async function callLinkAI(userMessage) {
     // 添加当前消息
     messages.push({ role: 'user', content: userMessage });
 
-    const body = { 
-        messages,
-        // 请求语音回复
-        response_format: {
-            type: 'audio'
-        }
-    };
+    const body = { messages };
     
     if (config.appCode) {
         body.app_code = config.appCode;
@@ -394,11 +388,12 @@ async function callLinkAI(userMessage) {
     const data = await response.json();
     const textContent = data.choices[0].message.content;
     
-    // 检查是否有语音URL
+    // 检查是否有语音URL（如果LinkAI返回的话）
     const audioUrl = data.choices[0].message.audio_url || 
                      data.choices[0].audio_url || 
                      data.audio_url ||
-                     (data.choices[0].message.audio && data.choices[0].message.audio.url);
+                     (data.choices[0].message.audio && data.choices[0].message.audio.url) ||
+                     null;
     
     return { text: textContent, audioUrl };
 }
