@@ -279,13 +279,21 @@ function appendMessage(role, content, animate = true, audioUrl = null) {
            </div>` 
         : '';
 
-    messageEl.innerHTML = `
-        ${avatarHtml}
-        <div class="message-wrapper">
-            ${messageHeader}
+    // 用户消息直接显示，AI消息用wrapper包裹
+    if (role === 'user') {
+        messageEl.innerHTML = `
+            ${avatarHtml}
             <div class="message-content">${formattedContent}</div>
-        </div>
-    `;
+        `;
+    } else {
+        messageEl.innerHTML = `
+            ${avatarHtml}
+            <div class="message-wrapper">
+                ${messageHeader}
+                <div class="message-content">${formattedContent}</div>
+            </div>
+        `;
+    }
 
     if (!animate) {
         messageEl.style.animation = 'none';
