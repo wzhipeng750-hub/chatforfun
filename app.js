@@ -238,8 +238,13 @@ async function sendMessage() {
     try {
         const response = await callLinkAI(content);
         loadingEl.remove();
-        appendMessage('assistant', response);
-        addMessageToConversation('assistant', response);
+        appendMessage('assistant', response.text, true, response.audioUrl);
+        addMessageToConversation('assistant', response.text);
+        
+        // 自动播放语音
+        if (response.audioUrl) {
+            playAudio(response.audioUrl);
+        }
     } catch (error) {
         loadingEl.remove();
         appendMessage('assistant', `抱歉，发生了错误：${error.message}`);
@@ -249,7 +254,7 @@ async function sendMessage() {
     }
 }
 
-function appendMessage(role, content, animate = true) {
+function appendMessage(role, content, animate = true, audioUrl = null) {
     const messageEl = document.createElement('div');
     messageEl.className = `message ${role}`;
     
@@ -257,10 +262,19 @@ function appendMessage(role, content, animate = true) {
     const avatarHtml = role === 'user' 
         ? '<div class="avatar">我</div>' 
         : '<img class="avatar" src="touxiang.jpg" alt="助手">';
+    
+    // 如果有语音，添加播放按钮
+    const audioBtn = (role === 'assistant' && audioUrl) 
+        ? `<button class="audio-btn" onclick="playAudio('${audioUrl}')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z"/>
+            </svg>
+           </button>` 
+        : '';
 
     messageEl.innerHTML = `
         ${avatarHtml}
-        <div class="message-content">${formattedContent}</div>
+        <div class="message-content">${formattedContent}${audioBtn}</div>
     `;
 
     if (!animate) {
@@ -269,6 +283,22 @@ function appendMessage(role, content, animate = true) {
 
     messagesContainer.appendChild(messageEl);
     scrollToBottom();
+}
+
+// 播放语音
+let currentAudio = null;
+function playAudio(url) {
+    // 停止当前播放
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio = null;
+    }
+    
+    currentAudio = new Audio(url);
+    currentAudio.play().catch(err => {
+        console.error('播放语音失败:', err);
+        showToast('语音播放失败');
+    });
 }
 
 function formatMessage(content) {
@@ -322,7 +352,13 @@ async function callLinkAI(userMessage) {
     // 添加当前消息
     messages.push({ role: 'user', content: userMessage });
 
-    const body = { messages };
+    const body = { 
+        messages,
+        // 请求语音回复
+        response_format: {
+            type: 'audio'
+        }
+    };
     
     if (config.appCode) {
         body.app_code = config.appCode;
@@ -346,7 +382,15 @@ async function callLinkAI(userMessage) {
     }
 
     const data = await response.json();
-    return data.choices[0].message.content;
+    const textContent = data.choices[0].message.content;
+    
+    // 检查是否有语音URL
+    const audioUrl = data.choices[0].message.audio_url || 
+                     data.choices[0].audio_url || 
+                     data.audio_url ||
+                     (data.choices[0].message.audio && data.choices[0].message.audio.url);
+    
+    return { text: textContent, audioUrl };
 }
 
 // Toast 提示
