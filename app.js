@@ -22,16 +22,37 @@ let conversations = JSON.parse(localStorage.getItem('conversations')) || [];
 let currentConversationId = null;
 let isLoading = false;
 
+// 机器人配置
+const botConfigs = {
+    professional: {
+        name: '专业问答模型',
+        avatar: 'touxiang2.png',
+        appCode: '5Zf8qEcq',
+        theme: 'blue'
+    },
+    xiaomei: {
+        name: '小美',
+        avatar: 'touxiang.jpg',
+        appCode: 'H8Cd00WB',
+        theme: 'pink'
+    }
+};
+
+// 当前机器人（默认专业问答模型）
+let currentBot = localStorage.getItem('currentBot') || 'professional';
+
 // 配置（固定值）
 const config = {
     apiKey: 'Link_EyrdPJTHLBjpEhRuuYptcNA3D0m1bGVe7CtTtubN4r',
-    appCode: 'H8Cd00WB',
+    appCode: botConfigs[currentBot].appCode,
     model: ''
 };
 
 // 初始化
 function init() {
     loadSettings();
+    setupBotSelector();
+    applyBotTheme();
     renderChatHistory();
     setupEventListeners();
     autoResizeTextarea();
@@ -69,6 +90,80 @@ function setupEventListeners() {
             sendMessage();
         });
     });
+}
+
+// 设置机器人选择器
+function setupBotSelector() {
+    const botOptions = document.querySelectorAll('.bot-option');
+    botOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            const botType = option.dataset.bot;
+            switchBot(botType);
+        });
+    });
+    
+    // 设置当前选中的机器人
+    updateBotSelector();
+}
+
+// 切换机器人
+function switchBot(botType) {
+    if (botType === currentBot) return;
+    
+    currentBot = botType;
+    localStorage.setItem('currentBot', botType);
+    
+    // 更新配置
+    config.appCode = botConfigs[botType].appCode;
+    
+    // 应用主题
+    applyBotTheme();
+    
+    // 更新选择器状态
+    updateBotSelector();
+    
+    // 更新欢迎页面
+    updateWelcomeScreen();
+}
+
+// 应用机器人主题
+function applyBotTheme() {
+    const theme = botConfigs[currentBot].theme;
+    document.body.className = `theme-${theme}`;
+}
+
+// 更新机器人选择器状态
+function updateBotSelector() {
+    const botOptions = document.querySelectorAll('.bot-option');
+    botOptions.forEach(option => {
+        if (option.dataset.bot === currentBot) {
+            option.classList.add('active');
+        } else {
+            option.classList.remove('active');
+        }
+    });
+}
+
+// 更新欢迎页面
+function updateWelcomeScreen() {
+    const bot = botConfigs[currentBot];
+    const welcomeAvatar = document.getElementById('welcomeAvatar');
+    const welcomeTitle = document.getElementById('welcomeTitle');
+    const headerTitle = document.querySelector('.header-title');
+    const logo = document.querySelector('.logo span');
+    
+    if (welcomeAvatar) {
+        welcomeAvatar.src = bot.avatar;
+    }
+    if (welcomeTitle) {
+        welcomeTitle.textContent = `你好，我是${bot.name}`;
+    }
+    if (headerTitle) {
+        headerTitle.textContent = bot.name;
+    }
+    if (logo) {
+        logo.textContent = bot.name;
+    }
 }
 
 // 侧边栏操作
@@ -116,6 +211,7 @@ function startNewChat() {
     currentConversationId = null;
     messagesContainer.innerHTML = '';
     welcomeScreen.classList.remove('hidden');
+    updateWelcomeScreen();
     closeSidebar();
     updateActiveHistory();
 }
@@ -259,9 +355,10 @@ function appendMessage(role, content, animate = true, audioUrl = null) {
     messageEl.className = `message ${role}`;
     
     const formattedContent = formatMessage(content);
+    const bot = botConfigs[currentBot];
     const avatarHtml = role === 'user' 
         ? '<div class="avatar">我</div>' 
-        : '<img class="avatar" src="touxiang.jpg" alt="助手">';
+        : `<img class="avatar" src="${bot.avatar}" alt="助手">`;
     
     // 获取当前时间
     const now = new Date();
@@ -338,10 +435,11 @@ function addMessageToConversation(role, content) {
 }
 
 function showTypingIndicator() {
+    const bot = botConfigs[currentBot];
     const el = document.createElement('div');
     el.className = 'message assistant';
     el.innerHTML = `
-        <img class="avatar" src="touxiang.jpg" alt="助手">
+        <img class="avatar" src="${bot.avatar}" alt="助手">
         <div class="message-content">
             <div class="typing-indicator">
                 <span></span>

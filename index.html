@@ -60,10 +60,20 @@
             <div class="chat-container" id="chatContainer">
                 <div class="welcome-screen" id="welcomeScreen">
                     <div class="welcome-icon">
-                        <img src="touxiang.jpg" alt="助手头像" style="width: 64px; height: 64px; border-radius: 50%;">
+                        <img id="welcomeAvatar" src="touxiang2.png" alt="助手头像" style="width: 64px; height: 64px; border-radius: 50%;">
                     </div>
-                    <h1>你好，我是小美</h1>
+                    <h1 id="welcomeTitle">你好，我是专业问答模型</h1>
                     <p>有什么我可以帮助你的吗？</p>
+                    <div class="bot-selector">
+                        <button class="bot-option active" data-bot="professional" id="botProfessional">
+                            <img src="touxiang2.png" alt="专业问答模型">
+                            <span>专业问答模型</span>
+                        </button>
+                        <button class="bot-option" data-bot="xiaomei" id="botXiaomei">
+                            <img src="touxiang.jpg" alt="小美">
+                            <span>小美</span>
+                        </button>
+                    </div>
                     <div class="quick-prompts">
                         <button class="prompt-btn" data-prompt="帮我写一篇文章">📝 帮我写一篇文章</button>
                         <button class="prompt-btn" data-prompt="解释一个概念">💡 解释一个概念</button>

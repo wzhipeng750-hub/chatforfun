@@ -5,18 +5,32 @@
 }
 
 :root {
-    --primary-color: #6366f1;
-    --primary-hover: #5558e3;
+    --primary-color: #3b82f6;
+    --primary-hover: #2563eb;
     --bg-color: #f7f7f8;
     --sidebar-bg: #ffffff;
     --chat-bg: #ffffff;
     --text-primary: #1a1a1a;
     --text-secondary: #666666;
     --border-color: #e5e5e5;
-    --user-msg-bg: #6366f1;
+    --user-msg-bg: #3b82f6;
     --ai-msg-bg: #f0f0f0;
     --input-bg: #ffffff;
     --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* 蓝色主题（专业问答模型） */
+body.theme-blue {
+    --primary-color: #3b82f6;
+    --primary-hover: #2563eb;
+    --user-msg-bg: #3b82f6;
+}
+
+/* 粉色主题（小美） */
+body.theme-pink {
+    --primary-color: #ec4899;
+    --primary-hover: #db2777;
+    --user-msg-bg: #ec4899;
 }
 
 body {
@@ -221,6 +235,56 @@ body {
 .welcome-screen p {
     color: var(--text-secondary);
     margin-bottom: 32px;
+}
+
+.bot-selector {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 32px;
+    justify-content: center;
+}
+
+.bot-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 24px;
+    background: var(--bg-color);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 120px;
+}
+
+.bot-option:hover {
+    border-color: var(--primary-color);
+    background: white;
+    box-shadow: var(--shadow);
+}
+
+.bot-option.active {
+    border-color: var(--primary-color);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.bot-option img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.bot-option span {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+body.theme-pink .bot-option.active {
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
 }
 
 .quick-prompts {
@@ -613,6 +677,15 @@ body {
 
     .welcome-screen h1 {
         font-size: 20px;
+    }
+
+    .bot-selector {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .bot-option {
+        min-width: auto;
     }
 
     .quick-prompts {
