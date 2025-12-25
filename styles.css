@@ -377,8 +377,19 @@ body.theme-purple .bot-option.active {
 .message-wrapper {
     display: flex;
     flex-direction: column;
-    flex: 1;
     min-width: 0;
+}
+
+.message.user .message-wrapper {
+    align-items: flex-end;
+}
+
+.message.assistant .message-wrapper {
+    align-items: flex-start;
+}
+
+.message.user .message-header {
+    flex-direction: row-reverse;
 }
 
 .message-header {
