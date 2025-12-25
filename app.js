@@ -35,11 +35,20 @@ const botConfigs = {
         avatar: 'touxiang.jpg',
         appCode: 'H8Cd00WB',
         theme: 'pink'
+    },
+    autoChat: {
+        name: '小美调戏机器人',
+        avatar: 'touxiang3.jpg',
+        appCode: 'H8Cd00WB',
+        theme: 'purple',
+        isAutoMode: true
     }
 };
 
 // 当前机器人（默认专业问答模型）
 let currentBot = localStorage.getItem('currentBot') || 'professional';
+let autoChatRound = 0; // 自动对话回合数
+let isAutoChatting = false; // 是否正在自动对话
 
 // 配置（固定值）
 const config = {
@@ -124,6 +133,11 @@ function switchBot(botType) {
     
     // 更新欢迎页面
     updateWelcomeScreen();
+    
+    // 如果是自动对话模式，启动自动对话
+    if (botConfigs[botType].isAutoMode) {
+        startAutoChat();
+    }
 }
 
 // 应用机器人主题
@@ -455,6 +469,172 @@ function showTypingIndicator() {
 
 function scrollToBottom() {
     chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+// 自动对话模式
+async function startAutoChat() {
+    if (isAutoChatting) return;
+    
+    isAutoChatting = true;
+    autoChatRound = 0;
+    
+    // 隐藏欢迎页
+    welcomeScreen.classList.add('hidden');
+    messagesContainer.innerHTML = '';
+    
+    // 创建新对话
+    currentConversationId = createConversation('小美调戏机器人');
+    
+    // 机器人开场语
+    const openingLine = '小美小美，你在干嘛呢？想你了~';
+    
+    // 显示机器人的开场语（作为"用户"角色，但显示为机器人头像）
+    appendAutoChatMessage('robot', openingLine);
+    
+    // 延迟后让小美回复
+    await delay(1500);
+    
+    // 开始自动对话循环
+    await autoChatLoop(openingLine);
+}
+
+// 自动对话循环
+async function autoChatLoop(lastRobotMessage) {
+    if (autoChatRound >= 6 || !isAutoChatting) {
+        isAutoChatting = false;
+        showToast('自动对话已结束（6回合）');
+        return;
+    }
+    
+    autoChatRound++;
+    
+    // 显示小美正在输入
+    const loadingEl = showAutoChatTypingIndicator('xiaomei');
+    
+    try {
+        // 小美回复（使用小美的appCode）
+        const xiaomeiResponse = await callLinkAIWithAppCode(lastRobotMessage, 'H8Cd00WB');
+        loadingEl.remove();
+        appendAutoChatMessage('xiaomei', xiaomeiResponse.text);
+        
+        // 延迟后机器人回复
+        await delay(2000);
+        
+        if (autoChatRound >= 6) {
+            isAutoChatting = false;
+            showToast('自动对话已结束（6回合）');
+            return;
+        }
+        
+        // 显示机器人正在输入
+        const robotLoadingEl = showAutoChatTypingIndicator('robot');
+        
+        // 机器人回复（使用专业问答模型的appCode）
+        const robotResponse = await callLinkAIWithAppCode(xiaomeiResponse.text, '5Zf8qEcq');
+        robotLoadingEl.remove();
+        appendAutoChatMessage('robot', robotResponse.text);
+        
+        // 延迟后继续循环
+        await delay(2000);
+        await autoChatLoop(robotResponse.text);
+        
+    } catch (error) {
+        loadingEl.remove();
+        appendAutoChatMessage('xiaomei', `对话出错了：${error.message}`);
+        isAutoChatting = false;
+    }
+}
+
+// 显示自动对话消息
+function appendAutoChatMessage(sender, content) {
+    const messageEl = document.createElement('div');
+    messageEl.className = `message ${sender === 'xiaomei' ? 'assistant' : 'user'}`;
+    
+    const formattedContent = formatMessage(content);
+    
+    const avatarHtml = sender === 'xiaomei' 
+        ? '<img class="avatar" src="touxiang.jpg" alt="小美">'
+        : '<img class="avatar" src="touxiang2.png" alt="机器人">';
+    
+    const now = new Date();
+    const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+    
+    if (sender === 'xiaomei') {
+        messageEl.innerHTML = `
+            ${avatarHtml}
+            <div class="message-wrapper">
+                <div class="message-header">
+                    <span class="message-time">${timeStr}</span>
+                    <span class="sender-name">小美</span>
+                </div>
+                <div class="message-content">${formattedContent}</div>
+            </div>
+        `;
+    } else {
+        messageEl.innerHTML = `
+            ${avatarHtml}
+            <div class="message-wrapper">
+                <div class="message-header">
+                    <span class="message-time">${timeStr}</span>
+                    <span class="sender-name">机器人</span>
+                </div>
+                <div class="message-content">${formattedContent}</div>
+            </div>
+        `;
+    }
+    
+    messagesContainer.appendChild(messageEl);
+    scrollToBottom();
+}
+
+// 显示自动对话输入指示器
+function showAutoChatTypingIndicator(sender) {
+    const el = document.createElement('div');
+    el.className = `message ${sender === 'xiaomei' ? 'assistant' : 'user'}`;
+    const avatar = sender === 'xiaomei' ? 'touxiang.jpg' : 'touxiang2.png';
+    el.innerHTML = `
+        <img class="avatar" src="${avatar}" alt="${sender}">
+        <div class="message-content">
+            <div class="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    `;
+    messagesContainer.appendChild(el);
+    scrollToBottom();
+    return el;
+}
+
+// 使用指定appCode调用API
+async function callLinkAIWithAppCode(userMessage, appCode) {
+    const body = { 
+        messages: [{ role: 'user', content: userMessage }],
+        app_code: appCode
+    };
+
+    const response = await fetch('https://api.link-ai.tech/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${config.apiKey}`
+        },
+        body: JSON.stringify(body)
+    });
+
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.message || `请求失败 (${response.status})`);
+    }
+
+    const data = await response.json();
+    return { text: data.choices[0].message.content };
+}
+
+// 延迟函数
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 // LinkAI API 调用

@@ -33,6 +33,13 @@ body.theme-pink {
     --user-msg-bg: #ec4899;
 }
 
+/* 紫色主题（小美调戏机器人） */
+body.theme-purple {
+    --primary-color: #8b5cf6;
+    --primary-hover: #7c3aed;
+    --user-msg-bg: #8b5cf6;
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     background-color: var(--bg-color);
@@ -285,6 +292,16 @@ body {
 
 body.theme-pink .bot-option.active {
     box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+}
+
+body.theme-purple .bot-option.active {
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.sender-name {
+    font-size: 12px;
+    color: var(--primary-color);
+    font-weight: 500;
 }
 
 .quick-prompts {
