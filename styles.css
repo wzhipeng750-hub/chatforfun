@@ -378,6 +378,7 @@ body.theme-purple .bot-option.active {
     display: flex;
     flex-direction: column;
     min-width: 0;
+    max-width: 70%;
 }
 
 .message.user .message-wrapper {
@@ -416,7 +417,6 @@ body.theme-purple .bot-option.active {
     background: var(--user-msg-bg);
     color: white;
     border-bottom-right-radius: 4px;
-    max-width: 70%;
 }
 
 .message.assistant .message-content {
