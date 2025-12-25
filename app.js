@@ -38,7 +38,7 @@ const botConfigs = {
     },
     autoChat: {
         name: '小美调戏机器人',
-        avatar: 'touxiang3.jpg',
+        avatar: 'touxiang3.png',
         appCode: 'H8Cd00WB',
         theme: 'purple',
         isAutoMode: true
@@ -548,40 +548,30 @@ async function autoChatLoop(lastRobotMessage) {
 // 显示自动对话消息
 function appendAutoChatMessage(sender, content) {
     const messageEl = document.createElement('div');
-    messageEl.className = `message ${sender === 'xiaomei' ? 'assistant' : 'user'}`;
+    // 机器人消息在右边(user样式)，小美消息在左边(assistant样式)
+    messageEl.className = `message ${sender === 'robot' ? 'user' : 'assistant'}`;
     
     const formattedContent = formatMessage(content);
     
     const avatarHtml = sender === 'xiaomei' 
         ? '<img class="avatar" src="touxiang.jpg" alt="小美">'
-        : '<img class="avatar" src="touxiang2.png" alt="机器人">';
+        : '<img class="avatar" src="touxiang3.png" alt="机器人">';
     
     const now = new Date();
     const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
     
-    if (sender === 'xiaomei') {
-        messageEl.innerHTML = `
-            ${avatarHtml}
-            <div class="message-wrapper">
-                <div class="message-header">
-                    <span class="message-time">${timeStr}</span>
-                    <span class="sender-name">小美</span>
-                </div>
-                <div class="message-content">${formattedContent}</div>
+    const senderName = sender === 'xiaomei' ? '小美' : '机器人';
+    
+    messageEl.innerHTML = `
+        ${avatarHtml}
+        <div class="message-wrapper">
+            <div class="message-header">
+                <span class="message-time">${timeStr}</span>
+                <span class="sender-name">${senderName}</span>
             </div>
-        `;
-    } else {
-        messageEl.innerHTML = `
-            ${avatarHtml}
-            <div class="message-wrapper">
-                <div class="message-header">
-                    <span class="message-time">${timeStr}</span>
-                    <span class="sender-name">机器人</span>
-                </div>
-                <div class="message-content">${formattedContent}</div>
-            </div>
-        `;
-    }
+            <div class="message-content">${formattedContent}</div>
+        </div>
+    `;
     
     messagesContainer.appendChild(messageEl);
     scrollToBottom();
@@ -590,8 +580,8 @@ function appendAutoChatMessage(sender, content) {
 // 显示自动对话输入指示器
 function showAutoChatTypingIndicator(sender) {
     const el = document.createElement('div');
-    el.className = `message ${sender === 'xiaomei' ? 'assistant' : 'user'}`;
-    const avatar = sender === 'xiaomei' ? 'touxiang.jpg' : 'touxiang2.png';
+    el.className = `message ${sender === 'robot' ? 'user' : 'assistant'}`;
+    const avatar = sender === 'xiaomei' ? 'touxiang.jpg' : 'touxiang3.png';
     el.innerHTML = `
         <img class="avatar" src="${avatar}" alt="${sender}">
         <div class="message-content">
