@@ -31,7 +31,7 @@ const botConfigs = {
         theme: 'blue'
     },
     xiaomei: {
-        name: '巩狗媳妇',
+        name: '小美',
         avatar: 'touxiang.jpg',
         appCode: 'H8Cd00WB',
         theme: 'pink'
