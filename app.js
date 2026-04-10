@@ -332,13 +332,8 @@ async function sendMessage() {
     try {
         const response = await callLinkAI(content);
         loadingEl.remove();
-        appendMessage('assistant', response.text, true, response.audioUrl);
+        appendMessage('assistant', response.text, true);
         addMessageToConversation('assistant', response.text);
-        
-        // 自动播放语音
-        if (response.audioUrl) {
-            playAudio(response.audioUrl);
-        }
     } catch (error) {
         loadingEl.remove();
         appendMessage('assistant', `抱歉，发生了错误：${error.message}`);
@@ -348,7 +343,7 @@ async function sendMessage() {
     }
 }
 
-function appendMessage(role, content, animate = true, audioUrl = null) {
+function appendMessage(role, content, animate = true) {
     const messageEl = document.createElement('div');
     messageEl.className = `message ${role}`;
     
@@ -362,15 +357,10 @@ function appendMessage(role, content, animate = true, audioUrl = null) {
     const now = new Date();
     const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
     
-    // AI消息显示时间和播放按钮
+    // AI消息显示时间
     const messageHeader = role === 'assistant' 
         ? `<div class="message-header">
             <span class="message-time">${timeStr}</span>
-            <button class="audio-btn" onclick="playAudio('${audioUrl || ''}')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                </svg>
-            </button>
            </div>` 
         : '';
 
@@ -396,22 +386,6 @@ function appendMessage(role, content, animate = true, audioUrl = null) {
 
     messagesContainer.appendChild(messageEl);
     scrollToBottom();
-}
-
-// 播放语音
-let currentAudio = null;
-function playAudio(url) {
-    // 停止当前播放
-    if (currentAudio) {
-        currentAudio.pause();
-        currentAudio = null;
-    }
-    
-    currentAudio = new Audio(url);
-    currentAudio.play().catch(err => {
-        console.error('播放语音失败:', err);
-        showToast('语音播放失败');
-    });
 }
 
 function formatMessage(content) {
@@ -490,16 +464,7 @@ async function callLinkAI(userMessage) {
     }
 
     const data = await response.json();
-    const textContent = data.choices[0].message.content;
-    
-    // 检查是否有语音URL（如果LinkAI返回的话）
-    const audioUrl = data.choices[0].message.audio_url || 
-                     data.choices[0].audio_url || 
-                     data.audio_url ||
-                     (data.choices[0].message.audio && data.choices[0].message.audio.url) ||
-                     null;
-    
-    return { text: textContent, audioUrl };
+    return { text: data.choices[0].message.content };
 }
 
 // Toast 提示
