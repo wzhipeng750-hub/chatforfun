@@ -12,7 +12,7 @@
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="logo">
-                    <span>专业问答模型</span>
+                    <span id="timeGreeting">你好，我是小鹏</span>
                 </div>
                 <button class="new-chat-btn" id="newChatBtn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -63,17 +63,11 @@
                         <img id="welcomeAvatar" src="touxiang2.png" alt="助手头像" style="width: 64px; height: 64px; border-radius: 50%;">
                     </div>
                     <h1 id="welcomeTitle">你好，我是小鹏</h1>
-                    <div class="bot-selector">
-                        <button class="bot-option active" data-bot="professional" id="botProfessional">
-                            <img src="touxiang2.png" alt="专业问答模型">
-                            <span>专业问答模型</span>
-                        </button>
-                    </div>
                     <div class="quick-prompts">
-                        <button class="prompt-btn" data-prompt="帮我写一篇文章">📝 帮我写一篇文章</button>
-                        <button class="prompt-btn" data-prompt="解释一个概念">💡 解释一个概念</button>
-                        <button class="prompt-btn" data-prompt="帮我写代码">💻 帮我写代码</button>
-                        <button class="prompt-btn" data-prompt="翻译文本">🌐 翻译文本</button>
+                        <button class="prompt-btn" data-prompt="哄我开心">哄我开心😜</button>
+                        <button class="prompt-btn" data-prompt="我想你了鹏鹏">我想你了鹏鹏🥰</button>
+                        <button class="prompt-btn" data-prompt="我想听你讲个笑话">我想听你讲个笑话😆</button>
+                        <button class="prompt-btn" data-prompt="给我讲个睡前故事">给我讲个睡前故事😁</button>
                     </div>
                 </div>
                 <div class="messages" id="messages"></div>
@@ -95,7 +89,6 @@
                         </svg>
                     </button>
                 </div>
-                <p class="input-hint">按 Enter 发送，Shift + Enter 换行</p>
             </div>
         </main>
     </div>
@@ -141,6 +134,16 @@
     <!-- 遮罩层 -->
     <div class="overlay" id="overlay"></div>
 
+    <script>
+        (function () {
+            const el = document.getElementById('timeGreeting');
+            if (!el) return;
+
+            const hour = new Date().getHours();
+            const period = hour < 6 ? '凌晨' : hour < 12 ? '早上' : hour < 18 ? '下午' : '晚上';
+            el.textContent = `${period}好，我是小鹏`;
+        })();
+    </script>
     <script src="app.js"></script>
 </body>
 </html>

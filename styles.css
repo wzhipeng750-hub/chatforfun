@@ -244,60 +244,6 @@ body {
     margin-bottom: 32px;
 }
 
-.bot-selector {
-    display: flex;
-    gap: 16px;
-    margin-bottom: 32px;
-    justify-content: center;
-}
-
-.bot-option {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 16px 24px;
-    background: var(--bg-color);
-    border: 2px solid var(--border-color);
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-    min-width: 120px;
-}
-
-.bot-option:hover {
-    border-color: var(--primary-color);
-    background: white;
-    box-shadow: var(--shadow);
-}
-
-.bot-option.active {
-    border-color: var(--primary-color);
-    background: white;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.bot-option img {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-.bot-option span {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text-primary);
-}
-
-body.theme-pink .bot-option.active {
-    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
-}
-
-body.theme-purple .bot-option.active {
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
-}
-
 .sender-name {
     font-size: 12px;
     color: var(--primary-color);
@@ -707,15 +653,6 @@ body.theme-purple .bot-option.active {
         font-size: 20px;
     }
 
-    .bot-selector {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .bot-option {
-        min-width: auto;
-    }
-
     .quick-prompts {
         grid-template-columns: 1fr;
     }
@@ -734,6 +671,10 @@ body.theme-purple .bot-option.active {
 
     .chat-container {
         padding: 16px;
+        background-image: url('background.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
     }
 
     .input-area {
